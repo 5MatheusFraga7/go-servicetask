@@ -7,18 +7,17 @@ type Database interface {
 	Close() error
 }
 
-func ConnectToDatabase(database Database) error {
+func OpenConnectionToDatabase(database Database) error {
 	err := database.Connect()
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("Conectamos!!!!!: %v", database)
-
-	err = database.Close()
-	if err != nil {
-		return err
-	}
+	fmt.Println("Conexão aberta!!!!!: %v", database)
 
 	return nil
+}
+
+func CloseConnectionToDatabase(database Database) {
+	database.Close()
 }

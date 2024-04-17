@@ -5,15 +5,13 @@ import (
 	"fmt"
 	"task-manager/internal/db"
 
-	_ "github.com/lib/pq" // Importa o driver PostgreSQL
+	_ "github.com/lib/pq"
 )
 
-// PostgreSQLAdapter é a implementação do adaptador para PostgreSQL
 type PostgreSQLAdapter struct {
 	db *sql.DB
 }
 
-// NewPostgreSQLAdapter cria uma nova instância do adaptador PostgreSQL
 func NewPostgreSQLAdapter() *PostgreSQLAdapter {
 	return &PostgreSQLAdapter{}
 }
@@ -40,6 +38,19 @@ func (p *PostgreSQLAdapter) Close() error {
 		return p.db.Close()
 	}
 	return nil
+}
+
+func (p *PostgreSQLAdapter) Exec(query string, args ...interface{}) (sql.Result, error) {
+	if p.db == nil {
+		return nil, fmt.Errorf("não é possível executar consulta: adaptador não conectado ao banco de dados")
+	}
+
+	result, err := p.db.Exec(query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("erro ao executar consulta SQL: %v", err)
+	}
+
+	return result, nil
 }
 
 // Implemente a interface db.Database no adaptador PostgreSQL

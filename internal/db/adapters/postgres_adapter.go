@@ -32,7 +32,6 @@ func (p *PostgreSQLAdapter) Connect() error {
 	return nil
 }
 
-// Close fecha a conexão com o banco de dados PostgreSQL
 func (p *PostgreSQLAdapter) Close() error {
 	if p.db != nil {
 		return p.db.Close()
@@ -51,6 +50,19 @@ func (p *PostgreSQLAdapter) Exec(query string, args ...interface{}) (sql.Result,
 	}
 
 	return result, nil
+}
+
+func (p *PostgreSQLAdapter) Query(query string, args ...interface{}) (*sql.Rows, error) {
+	if p.db == nil {
+		return nil, fmt.Errorf("não é possível executar consulta: adaptador não conectado ao banco de dados")
+	}
+
+	rows, err := p.db.Query(query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("erro ao executar consulta SQL: %v", err)
+	}
+
+	return rows, nil
 }
 
 // Implemente a interface db.Database no adaptador PostgreSQL

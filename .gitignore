@@ -21,3 +21,5 @@
 go.work
 
 cmd/.env
+cmd/data.csv
+cmd/data2.csv

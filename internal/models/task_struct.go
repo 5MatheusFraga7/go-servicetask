@@ -10,6 +10,6 @@ type Task struct {
 	UserName    string
 	Deadline    time.Time
 	Done        bool
-	FinishedAT  time.Time
+	FinishedAT  *time.Time
 	CreatedAt   time.Time
 }

@@ -57,15 +57,49 @@ func (tr TaskRepository) ReadTask(taskId int) []models.Task {
 	return mapRowsToTasks(rows)
 }
 
-func (tr TaskRepository) updateTask() {
+func (tr TaskRepository) UpdateTask(t models.Task) error {
 
+	postgresAdapter := adapters.NewPostgreSQLAdapter()
+	err := db.OpenConnectionToDatabase(postgresAdapter)
+
+	if err != nil {
+		fmt.Println("Erro ao conectar no banco:", err)
+		return err
+	}
+
+	_, err = postgresAdapter.Exec(getUpdateTaskSql(),
+		t.Id,
+		t.Name,
+		t.Description,
+		t.UserName,
+		t.Deadline,
+		t.Done,
+		t.Duration,
+		t.FinishedAT,
+	)
+
+	if err != nil {
+		fmt.Println("Erro ao conectar no banco:", err)
+		return err
+	}
+
+	return nil
 }
-func (tr TaskRepository) deleteTask() {
+func (tr TaskRepository) DeleteTask(taskId int) error {
+	postgresAdapter := adapters.NewPostgreSQLAdapter()
+	err := db.OpenConnectionToDatabase(postgresAdapter)
 
+	if err != nil {
+		fmt.Println("Erro ao conectar no banco:", err)
+		return err
+	}
+
+	_, err = postgresAdapter.Exec(getDeleteTaskSql(), taskId)
+
+	return nil
 }
 
 func getCreateTaskSql() string {
-
 	query := `
 			INSERT INTO tasks (name, description, username, deadline, done, created_at)
 			VALUES ($1, $2, $3, $4, false, now())
@@ -75,6 +109,21 @@ func getCreateTaskSql() string {
 
 func getReadTaskSql() string {
 	query := `SELECT * FROM tasks WHERE id = $1`
+	return query
+}
+
+func getUpdateTaskSql() string {
+
+	query := `
+			UPDATE tasks 
+			SET name = $2, description = $3, username = $4, deadline = $5, done = $6, duration = $7, finished_at = $8
+			WHERE id = $1
+	`
+	return query
+}
+
+func getDeleteTaskSql() string {
+	query := `DELETE FROM tasks WHERE id = $1`
 	return query
 }
 

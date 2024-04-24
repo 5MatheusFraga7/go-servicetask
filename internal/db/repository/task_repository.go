@@ -11,7 +11,7 @@ import (
 type TaskRepository struct {
 }
 
-func (tr TaskRepository) CreateTask(t models.Task) error {
+func (tr *TaskRepository) CreateTask(t models.Task) error {
 
 	postgresAdapter := adapters.NewPostgreSQLAdapter()
 	err := db.OpenConnectionToDatabase(postgresAdapter)
